@@ -1,0 +1,145 @@
+The format of data in Mark Cooksey's Game Gear/Master System sound engine is very close to the Game Boy (Color) sound engine, but is missing some features, like duty and panning*, and has simpler instrument data, due to the sound hardware being more limited. Despite this, however, the code of the Game Gear version surprisingly does not share a lot of code from the Game Boy version, despite them using a similar CPU.
+
+*Panning is available on the Game Gear sound hardware, but is absent on the Master System, so thus, it is not present in this sound engine.
+
+The Song Table
+=======================================
+The table consists of a series of five 16-bit values which each make up a "song". The first four values represent the starting point for each channel, while the fifth value represents a pointer to the note length table (see below).
+The table's location is found with the following series of instructions:
+
+	;Get song address
+	;x10 bytes = Song entry length
+	ld a, b
+	add a, a
+	add a, a
+	add a, a
+	add a, b
+	add a, b
+	ld hl, SongTab
+	add a, l
+	ld l, a
+	jr nc, .LoadSong3
+	inc h
+
+In hex values, this equates to:
+78 87 87 87 80 80 21 ?? ?? 85 6F 30 01 24
+
+Note Length Tables
+=======================================
+Note length tables are a series of 16-byte tables that specify various note lengths. This table is shared between all instruments at once. The table pointer can be changed via a command (see below).
+
+The Instrument Table
+=======================================
+The table consists of a series of up to 32 arrays of values, the last 16 which are accessed using a flag. The instrument table is found with the following series of instructions:
+	;Get the current instrument offset in table
+	add a, a
+	ld hl, InstTab
+	add a, l
+	ld l, a
+	jr nc, .ProcessInst2
+	inc h
+
+In hex values, this equates to:
+87 21 ?? ?? 85 6F 30 01 24
+
+Each instrument is 6 bytes (compared to the Game Boy version's 12 bytes):
+1-2 = Pointer to volume/envelope sequence
+3-4 = Pointer to vibrato sequence
+5-6 = Pointer to pitch modulation sequence, 0 if unused
+
+Unlike on the Game Boy where a delay value before each sequence is specified by the instrument, the delay value is automatically set to 1 for each sequence in this version. There is also no period control, duty, or initial volume/envelope value (the GG and SMS hardware lack period control or duty, but have volume).
+
+Envelope control sequences work as follows:
+[repeat]
+ 1. Duration (in frames)
+		FF = Sequence end
+ 2. Volume (0-15)
+[end]
+
+For vibrato control sequences:
+[repeat]
+ 1. Duration (in frames)
+		FF = Sequence end
+ 2. Pitch/tuning up/down (relative, signed)
+
+For pitch modulation sequences:
+[repeat]
+ 1. Duration (in frames)
+		FF = Sequence end
+ 2. Pitch up/down (in whole notes)
+
+Pitch modulation can be used to create effects like arpeggio (rapidly changing note pitches to simulate chords) and tom-tom drums. Note that in this version of the driver, the volume and vibrato sequences always only execute once per note, whereas pitch modulation sequences loop endlessly.
+
+Song Format
+=======================================
+Usually, the notes of songs are played through "macro" sequences of notes that are repeated with various parameters. These are played via the command 64, and are referenced from the macro table (see below).
+
+Notes are stored as follows, in binary:
+
+axxxxxxx yyyyzzzz
+
+A = If set, then the instrument count starts with 16
+X = Note value (00-5F)
+Y = Instrument
+Z = Note length (index of the current note length table)
+
+Commands are as follows (similar to the Game Boy, but missing panning commands):
+60 xy = Hold note (X = Instrument (unused), Y = Note length (same as above))
+61 = Stop channel
+62 xx xx = Jump to position (X = Position) (Used for looping)
+63 xx = Set noise value (periodic or white noise)
+64 xx yy zz = Go to macro (X = Sequence number - see below, Y = Transpose, Z = Number of times) (Note: 1 level only)
+65 = Return from macro
+66 xx = Set conditional flag (X = Value, not used by the driver)
+67 xx xx = Set note length value table pointer (X = Pointer) (Affects all channels)
+68 xx = Set song tempo
+
+The Macro Table
+=======================================
+Like the song table, the macro table is comprised of 16-bit pointer values. The macro table can be found using the following method:
+	ld de, MacroTab
+	inc hl
+	ld a, (hl)
+	add a, a
+	add a, e
+	ld e, a
+	jr nc, .ProcessMacro2
+	inc d
+
+In hex, this code reads as follows:
+11 ?? ?? 23 7E 87 83 5F 30 01 14
+
+Sound Effects Table
+=======================================
+This table is a series of 16-bit values which specify a sound effect macro to be played on one channel. Unlike the Game Boy sound engine which uses a flag at the start of the macro to specify the channel number, the channel number must manually be specified in register B (A is used for the sound effect number). However, channel 4 uses a slightly different format than other channels. For this reason, channel 1-3 sound effects cannot be played properly on channel 4 and vice versa.
+
+The table can be found using the following code:
+	;Otherwise, get SFX macro pointer from table
+	ld a, c
+	ld hl, SFXTab
+	add a, a
+	add a, l
+	ld l, a
+	jr nc, .LoadSFX2
+	inc h
+
+In hex, this code reads as follows:
+79 21 ?? ?? 87 85 6F 30 01 24
+
+Sound Effects Macro Format
+=======================================
+Macros for each sound effect consist of a series of 3-4 bytes which are values to write to the PSG registers. They are comprised as follows:
+
+If channel 1-3:
+[Repeat]
+1. PSG volume/envelope (0-15)
+	FF = Macro end
+2-3. PSG frequency value
+4. Delay before next event (in frames)
+
+If channel 4:
+[Repeat]
+1. PSG volume/envelope (0-15)
+	FF = Macro end
+2. PSG noise value
+3. Delay before next event (in frames)
