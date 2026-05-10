@@ -1631,7 +1631,7 @@ ProcessC1:
 	ld a, (C1Freq+1)
 	and %00111111
 	out (Port_PSG), a
-	;Then process note length
+	;Then process volume
 	ld a, (C1Vol)
 	and %00001111
 	or %10010000
@@ -1658,7 +1658,7 @@ ProcessC2:
 	ld a, (C2Freq+1)
 	and %00111111
 	out (Port_PSG), a
-	;Then process note length
+	;Then process volume
 	ld a, (C2Vol)
 	and %00001111
 	or %10110000
@@ -1685,7 +1685,7 @@ ProcessC3:
 	ld a, (C3Freq+1)
 	and %00111111
 	out (Port_PSG), a
-	;Then process note length
+	;Then process volume
 	ld a, (C3Vol)
 	and %00001111
 	or %11010000
@@ -1714,7 +1714,7 @@ ProcessC4:
 	or %11100000
 	out (Port_PSG), a
 .ProcessC4_3
-	;Then process note length
+	;Then process volume
 	ld a, (C4Vol)
 	and %00001111
 	or %11110000
