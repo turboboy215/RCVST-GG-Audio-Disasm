@@ -252,7 +252,7 @@ PlaySongC1:
 	ld a, (hl)
 	;Mask out the lower 4 bits to get the instrument number
 	and %11110000
-	;Shift left 4 bits
+	;Shift right 4 bits
 	srl a
 	srl a
 	srl a
@@ -2787,22 +2787,22 @@ FreqTab:
 	.dw $0008
 
 SongTab:
-.Song00
-	.dw Song00A, Song00B, Song00C, Song00D, LenTab2
-.Song01
-	.dw Song01A, Song01B, Song01C, Song01D, LenTab2
-.Song02
-	.dw Song02A, Song02B, Song02C, Song02D, LenTab2
-.Song03
-	.dw Song03A, Song03B, Song03C, Song03D, LenTab2
-.Song04
-	.dw Song04A, Song04B, Song04C, Song04D, LenTab2
-.Song05
-	.dw Song05A, Song05B, Song05C, Song05D, LenTab1
-.Song06
-	.dw Song06A, Song06B, Song06C, Song06D, LenTab2
-.Song07
-	.dw Song07A, Song07B, Song07C, Song07D, LenTab2
+.Victory
+	.dw VictoryA, VictoryB, VictoryC, VictoryD, LenTab2
+.FlightTerm
+	.dw FlightTermA, FlightTermB, FlightTermC, FlightTermD, LenTab2
+.HellCorp
+	.dw HellCorpA, HellCorpB, HellCorpC, HellCorpD, LenTab2
+.Street
+	.dw StreetA, StreetB, StreetC, StreetD, LenTab2
+.GameOver
+	.dw GameOverA, GameOverB, GameOverC, GameOverD, LenTab2
+.Complete
+	.dw CompleteA, CompleteB, CompleteC, CompleteD, LenTab1
+.Bang
+	.dw BangA, BangB, BangC, BangD, LenTab2
+.Silence
+	.dw SilenceA, SilenceB, SilenceC, SilenceD, LenTab2
 	
 LenTab1:
 	.db 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192, 5, 10
@@ -3202,26 +3202,26 @@ ModSeq03:
 	.db 12, 2
 	.db $FF
 	
-Song00A:
+VictoryA:
 	.db $68, 216
 	.db $64, $00, -3, 1
 	.db $60, $00
 	.db $66, 1
 	.db $62
-	.dw Song00A
-Song00B:
+	.dw VictoryA
+VictoryB:
 	.db $64, $01, -3, 1
 	.db $62
-	.dw Song00B
-Song00C:
+	.dw VictoryB
+VictoryC:
 	.db $46, $00
 	.db $64, $00, -3, 1
 	.db $62
-	.dw Song00C
-Song00D:
+	.dw VictoryC
+VictoryD:
 	.db $64, $02, 0, 1
 	.db $62
-	.dw Song00D
+	.dw VictoryD
 SongMacro00:
 	.db $30, $0A
 	.db $30, $0A
@@ -3721,17 +3721,17 @@ SongMacro02:
 	.db $11, $82
 	.db $65
 
-Song01A:
+FlightTermA:
 	.db $68, 252
 	.db $64, $03, -15, 1
 	.db $66, 1
 	.db $62
-	.dw Song01A
-Song01B:
+	.dw FlightTermA
+FlightTermB:
 	.db $64, $04, -3, 1
 	.db $62
-	.dw Song01B
-Song01C:
+	.dw FlightTermB
+FlightTermC:
 	.db $30, $0A
 	.db $30, $0A
 	.db $30, $0A
@@ -3743,11 +3743,11 @@ Song01C:
 	.db $64, $05, -1, 3
 	.db $64, $05, -3, 1
 	.db $62
-	.dw Song01C
-Song01D:
+	.dw FlightTermC
+FlightTermD:
 	.db $64, $06, 0, 1
 	.db $62
-	.dw Song01D
+	.dw FlightTermD
 	
 SongMacro03:
 	.db $35, $52
@@ -4413,24 +4413,24 @@ SongMacro06:
 	.db $15, $74
 	.db $65
 	
-Song02A:
+HellCorpA:
 	.db $68, 252
 	.db $64, $07, 12, 1
 	.db $66, 1
 	.db $62
-	.dw Song02A
-Song02B:
+	.dw HellCorpA
+HellCorpB:
 	.db $64, $08, 0, 1
 	.db $62
-	.dw Song02B
-Song02C:
+	.dw HellCorpB
+HellCorpC:
 	.db $64, $09, 0, 1
 	.db $62
-	.dw Song02C
-Song02D:
+	.dw HellCorpC
+HellCorpD:
 	.db $64, $0A, 0, 1
 	.db $62
-	.dw Song02D
+	.dw HellCorpD
 	
 SongMacro09:
 	.db $30, $0A
@@ -5267,13 +5267,13 @@ SongMacro0A:
 	.db $15, $74
 	.db $65
 	
-Song03A:
+StreetA:
 	.db $68, 252
 	.db $64, $0B, 12, 1
 	.db $66, 1
 	.db $62
-	.dw Song03A
-Song03B:
+	.dw StreetA
+StreetB:
 	.db $64, $0C, 0, 3
 	.db $64, $0C, -2, 1
 	.db $64, $0C, 5, 1
@@ -5306,8 +5306,8 @@ Song03B:
 	.db $64, $0C, -5, 1
 	.db $64, $0C, 0, 2
 	.db $62
-	.dw Song03B
-Song03C:
+	.dw StreetB
+StreetC:
 	.db $64, $0D, 0, 3
 	.db $64, $0D, 7, 1
 	.db $64, $0D, 5, 1
@@ -5340,11 +5340,11 @@ Song03C:
 	.db $64, $0F, 7, 1
 	.db $64, $0D, 0, 2
 	.db $62
-	.dw Song03C
-Song03D:
+	.dw StreetC
+StreetD:
 	.db $64, $0E, 0, 1
 	.db $62
-	.dw Song03D
+	.dw StreetD
 SongMacro0B:
 	.db $30, $0A
 	.db $30, $0A
@@ -5570,7 +5570,7 @@ SongMacro0E:
 	.db $15, $72
 	.db $65
 	
-Song04A:
+GameOverA:
 	.db $68, 252
 	.db $2C, $D6
 	.db $2C, $D4
@@ -5581,7 +5581,7 @@ Song04A:
 	.db $2C, $DA
 	.db $66, 1
 	.db $61
-Song04B:
+GameOverB:
 	.db $11, $16
 	.db $11, $14
 	.db $11, $14
@@ -5590,7 +5590,7 @@ Song04B:
 	.db $0F, $14
 	.db $11, $3A
 	.db $61
-Song04C:
+GameOverC:
 	.db $20, $66
 	.db $20, $64
 	.db $20, $64
@@ -5599,10 +5599,10 @@ Song04C:
 	.db $1F, $64
 	.db $20, $6A
 	.db $61
-Song04D:
+GameOverD:
 	.db $61
 	
-Song05A:
+CompleteA:
 	.db $68, 252
 	.db $30, $D4
 	.db $34, $D4
@@ -5623,7 +5623,7 @@ Song05A:
 	.db $30, $D8
 	.db $66, $01
 	.db $61
-Song05B:
+CompleteB:
 	.db $0C, $16
 	.db $0C, $14
 	.db $0C, $14
@@ -5635,7 +5635,7 @@ Song05B:
 	.db $13, $14
 	.db $0C, $3A
 	.db $61
-Song05C:
+CompleteC:
 	.db $24, $C6
 	.db $24, $C4
 	.db $24, $C4
@@ -5650,27 +5650,27 @@ Song05C:
 	.db $24, $C4
 	.db $18, $D8
 	.db $61
-Song05D:
+CompleteD:
 	.db $61
 	
-Song06A:
+BangA:
 	.db $68, 252
 	.db $64, $10, 0, 1
 	.db $66, 1
 	.db $62
-	.dw Song06A
-Song06B:
+	.dw BangA
+BangB:
 	.db $64, $11, 0, 1
 	.db $62
-	.dw Song06B
-Song06C:
+	.dw BangB
+BangC:
 	.db $64, $12, 0, 1
 	.db $62
-	.dw Song06C
-Song06D:
+	.dw BangC
+BangD:
 	.db $64, $13, 0, 1
 	.db $62
-	.dw Song06D
+	.dw BangD
 SongMacro10:
 	.db $30, $0A
 	.db $30, $0A
@@ -6149,10 +6149,10 @@ SongMacro13:
 	.db $15, $72
 	.db $65
 
-Song07A:
-Song07B:
-Song07C:
-Song07D:
+SilenceA:
+SilenceB:
+SilenceC:
+SilenceD:
 	.db $0F, $0A
 	.db $61
 
